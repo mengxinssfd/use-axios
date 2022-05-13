@@ -1,0 +1,59 @@
+{
+  "name": "@mxssfd/use-axios",
+  "version": "0.0.0",
+  "description": "使用插件的方式封装axios",
+  "main": "dist/index.js",
+  "typings": "./types/",
+  "sideEffects": false,
+  "files": [
+    "dist/*.js",
+    "types/*"
+  ],
+  "scripts": {
+    "test": "jest",
+    "cov": "jest --coverage",
+    "compile": "tsc --build tsconfig.build.json",
+    "babel": "babel dist --out-dir dist",
+    "build": "run-s compile babel pub",
+    "type-check": "tsc --noEmit",
+    "pub": "npm publish",
+    "compub": "run-s check-all compile pub",
+    "eslint": "eslint src __test__",
+    "prettier-fix": "prettier src __test__ --write",
+    "prettier-check": "prettier src __test__ --check",
+    "lint-check": "run-p eslint prettier-check",
+    "check-all": "run-p lint-check type-check",
+    "publish": "npm publish",
+    "prepublish": "tsc --build tsconfig.build.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mengxinssfd/use-axios.git"
+  },
+  "author": "DYH",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mengxinssfd/use-axios/issues"
+  },
+  "homepage": "https://github.com/mengxinssfd/use-axios#readme",
+  "dependencies": {
+    "axios": "^0.26.1"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.17.10",
+    "@babel/core": "^7.17.10",
+    "@types/jest": "^27.5.1",
+    "@typescript-eslint/eslint-plugin": "^5.23.0",
+    "@typescript-eslint/parser": "^5.23.0",
+    "babel-plugin-transform-remove-console": "^6.9.4",
+    "eslint": "^8.15.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "jest": "^27.5.1",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^2.6.2",
+    "ts-jest": "^27.1.4",
+    "tslib": "^2.4.0",
+    "typescript": "^4.6.4"
+  }
+}
