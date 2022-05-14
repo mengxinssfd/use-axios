@@ -1,25 +1,17 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
-import type { Lifecycle, PluginResult } from './types';
+import axios, { AxiosRequestConfig } from 'axios';
+import type { Lifecycle, UseAxios } from './types';
 
-type Use<T = {}> = <P extends PluginResult>(
-  plugin: P,
-) => T & P['extends'] & { use: Use<T & P['extends']> };
-
-type Request = (config: AxiosRequestConfig<any>) => Promise<AxiosResponse<any>>;
-
-export function useAxios(config?: AxiosRequestConfig) {
+export function useAxios(config?: AxiosRequestConfig): UseAxios {
   const axiosIns = axios.create(config);
   const plugins: Lifecycle[] = [];
 
-  const res: {
-    use: Use<{ request: Request }>;
-    request: Request;
-  } = {
-    use<P extends PluginResult>(plugin: P) {
+  const res: UseAxios = {
+    use(plugin) {
       plugin.lifecycle && plugins.push(plugin.lifecycle);
-      return { ...res, ...plugin.extends };
+      Object.assign(res, plugin.extends?.(res));
+      return res as any;
     },
-    async request(config: AxiosRequestConfig<any>): Promise<AxiosResponse<any>> {
+    async request(config) {
       plugins.forEach((p) => {
         p.beforeRequest?.(config);
       });
@@ -32,20 +24,3 @@ export function useAxios(config?: AxiosRequestConfig) {
   };
   return res;
 }
-const u = useAxios()
-  .use({
-    extends: {
-      // TODO 怎么返回整个对象呢
-      setCache() {
-        console.log(111);
-      },
-    },
-  })
-  .use({
-    extends: {
-      test2() {
-        console.log(111);
-      },
-    },
-  });
-u.setCache();
