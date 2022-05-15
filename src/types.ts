@@ -1,12 +1,18 @@
-import { AxiosRequestConfig, AxiosResponse } from 'axios';
+import { AxiosError, AxiosPromise, AxiosRequestConfig, AxiosResponse } from 'axios';
 
 export interface Lifecycle {
   beforeRequest?: (config: AxiosRequestConfig) => void;
-  onRequest?: () => void;
+  onRequest?: (
+    config: AxiosRequestConfig,
+    fetch: () => AxiosPromise<any>,
+  ) => void | (() => AxiosPromise<any>);
   afterRequest?: (res: AxiosResponse) => void;
+  onRequestError?: (e: AxiosError) => void;
 }
+
+export type LifecycleFn = (config: AxiosRequestConfig) => Lifecycle;
 export interface Plugin {
-  extends?: (ctx: UseAxios) => any;
+  extends?: {};
   lifecycle?: Lifecycle;
 }
 
@@ -26,7 +32,7 @@ export type Use<T = {}> = <P extends Plugin2, R extends T & P['extends']>(
 ) => R & { use: Use<R> };
 
 export type TransformFnReturnType<P extends {}, R = void> = {
-  [k in keyof P]: P[k] extends (...args: infer REST) => any ? (...args: REST) => R : P[k];
+  [K in keyof P]: P[K] extends (...args: infer REST) => any ? (...args: REST) => R : P[K];
 };
 
 const p = {

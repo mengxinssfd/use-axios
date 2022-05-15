@@ -1,5 +1,5 @@
 {
-  "name": "@mxssfd/use-axios",
+  "name": "@mxssfd/use-request",
   "version": "0.0.0",
   "description": "使用插件的方式封装axios",
   "main": "dist/index.js",
