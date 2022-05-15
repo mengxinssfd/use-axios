@@ -1,27 +1,8 @@
 import { Req } from './Req';
+import { CachePlugin } from './plugins/cache/cache.plugin';
+import { CancelPlugin } from './plugins/cancel/cancel.plugin';
+import { RetryPlugin } from './plugins/retry/retry.plugin';
 
-const p1 = {
-  extends: {
-    hello() {
-      return 'world';
-    },
-  },
-};
-const t = new Req().use(p1).use({
-  extends: {
-    foo() {
-      return 'bar';
-    },
-    test(this: Req, p: number) {
-      console.log(p);
-      return this; // 怎么让this包含hello和foo两个方法呢
-    },
-  },
-});
-t.hello();
-t.hello();
-t.hello();
-t.test(2).request({});
-t.test(3).hello();
-t.test(2).hello(); // error test()的返回值类型不包含hello和foo
-t.test(3).request({ headers: {} });
+const req = new Req({ baseURL: '' }).use(CachePlugin()).use(CancelPlugin()).use(RetryPlugin());
+req.useRetry({ times: 4 }).useCache({ enable: true }).request({});
+req.cancelCurrent();

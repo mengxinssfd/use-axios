@@ -2,7 +2,7 @@ import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 import { Lifecycle, LifecycleFn } from './types';
 
 export class Req {
-  private readonly fetch: AxiosInstance;
+  protected readonly fetch: AxiosInstance;
   private readonly lifecycles: Array<Lifecycle | LifecycleFn> = [];
   constructor(config?: AxiosRequestConfig) {
     this.fetch = axios.create(config);
@@ -24,6 +24,7 @@ export class Req {
     return _this;
   }
   async request(config: AxiosRequestConfig = {}) {
+    config = { ...config };
     const lifecycles = this.lifecycles.map((lc) =>
       typeof lc === 'function' ? lc.call(this, config) : lc,
     );
@@ -32,22 +33,30 @@ export class Req {
         beforeRequest?.call(this, config);
       }
 
+      // 流
       let fetchFn = () => this.fetch(config);
       for (const { onRequest } of lifecycles) {
         fetchFn = onRequest?.call(this, config, fetchFn) || fetchFn;
       }
 
-      const res = await fetchFn();
-
+      let res = await fetchFn();
       lifecycles.forEach(({ afterRequest }) => {
-        afterRequest?.(res);
+        res = afterRequest?.(res) ?? res;
       });
       return res;
     } catch (e: any) {
-      lifecycles.forEach(({ onRequestError }) => {
-        onRequestError?.call(this, e);
-      });
-      return Promise.reject(e);
+      try {
+        let res = e;
+        for (const { onRequestError } of lifecycles) {
+          res = (await onRequestError?.call(this, res)) ?? res;
+        }
+        lifecycles.forEach(({ afterRequest }) => {
+          res = afterRequest?.(res) || res;
+        });
+        return res;
+      } catch (e) {
+        return Promise.reject(e);
+      }
     }
   }
 }

@@ -7,7 +7,7 @@ export interface Lifecycle {
     fetch: () => AxiosPromise<any>,
   ) => void | (() => AxiosPromise<any>);
   afterRequest?: (res: AxiosResponse) => void;
-  onRequestError?: (e: AxiosError) => void;
+  onRequestError?: (e: AxiosError) => Promise<any> | void;
 }
 
 export type LifecycleFn = (config: AxiosRequestConfig) => Lifecycle;

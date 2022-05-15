@@ -1,6 +1,5 @@
 import { LifecycleFn } from '../../types';
 import axios, { Canceler } from 'axios';
-import { Req } from '../../Req';
 
 export function CancelPlugin() {
   let cancelers: Canceler[] = [];
