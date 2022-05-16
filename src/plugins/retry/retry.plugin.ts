@@ -12,7 +12,7 @@ export function RetryPlugin(retryConfig: RetryConfig = {}) {
   return {
     retryConfig: retryConfig,
     extends: {
-      useRetry(this: Req, cfg: RetryConfig = {}) {
+      useRetry(this: Req, cfg: RetryConfig = {}): Req {
         const _this = Object.create(this);
         _this.retryConfig = { ...retryConfig, ...cfg };
         return _this;

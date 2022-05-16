@@ -23,7 +23,7 @@ export class Req {
     plugin.lifecycle && _this.lifecycles.push(plugin.lifecycle);
     return _this;
   }
-  async request(config: AxiosRequestConfig = {}) {
+  async request<T>(config: AxiosRequestConfig = {}): Promise<T> {
     config = { ...config };
     const lifecycles = this.lifecycles.map((lc) =>
       typeof lc === 'function' ? lc.call(this, config) : lc,
@@ -43,7 +43,7 @@ export class Req {
       lifecycles.forEach(({ afterRequest }) => {
         res = afterRequest?.(res) ?? res;
       });
-      return res;
+      return res as any;
     } catch (e: any) {
       try {
         let res = e;
