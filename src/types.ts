@@ -1,7 +1,7 @@
 import { AxiosError, AxiosPromise, AxiosRequestConfig, AxiosResponse } from 'axios';
 
-export interface Lifecycle {
-  beforeRequest?: (config: AxiosRequestConfig) => void;
+export interface Hooks {
+  config?: (config: AxiosRequestConfig) => void;
   onRequest?: (
     config: AxiosRequestConfig,
     fetch: () => AxiosPromise<any>,
@@ -10,10 +10,10 @@ export interface Lifecycle {
   onRequestError?: (e: AxiosError) => Promise<any> | void;
 }
 
-export type LifecycleFn = (config: AxiosRequestConfig) => Lifecycle;
+export type HookFn = (config: AxiosRequestConfig) => Hooks;
 export interface Plugin {
   extends?: {};
-  lifecycle?: Lifecycle;
+  hooks?: Hooks;
 }
 
 type Request = (config: AxiosRequestConfig<any>) => Promise<AxiosResponse<any>>;
@@ -22,10 +22,6 @@ export interface UseAxios {
   request: Request;
 }
 
-export interface Plugin2 {
-  extends?: any;
-  lifecycle?: Lifecycle;
-}
 /*
 export type Use<T = {}> = <P extends Plugin2, R extends T & P['extends']>(
   plugin: P,

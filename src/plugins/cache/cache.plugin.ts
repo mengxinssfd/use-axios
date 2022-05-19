@@ -1,6 +1,6 @@
 import { Req } from '../../Req';
 import { Cache } from './Cache';
-import { Lifecycle } from '../../types';
+import { Hooks } from '../../types';
 import axios, { AxiosPromise, AxiosRequestConfig } from 'axios';
 
 export interface CacheConfig {
@@ -33,7 +33,7 @@ export const CachePlugin = (config: CacheConfig = {}) => {
         return _this;
       },
     },
-    lifecycle: {
+    hooks: {
       onRequest(config, fetch) {
         const cacheConfig = (this.cacheConfig || {}) as CacheConfig;
         if (!cacheConfig.enable) return;
@@ -53,6 +53,6 @@ export const CachePlugin = (config: CacheConfig = {}) => {
         });
         return () => promise;
       },
-    } as Lifecycle,
+    } as Hooks,
   };
 };

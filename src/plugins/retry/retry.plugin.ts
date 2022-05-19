@@ -1,4 +1,4 @@
-import { LifecycleFn } from '../../types';
+import { HookFn } from '../../types';
 import { Req } from '../../Req';
 import axios, { AxiosResponse } from 'axios';
 
@@ -18,7 +18,7 @@ export function RetryPlugin(retryConfig: RetryConfig = {}) {
         return _this;
       },
     },
-    lifecycle: function (config) {
+    hooks: function (config) {
       return {
         async onRequestError(this: Req, e) {
           if (axios.isCancel(e)) return;
@@ -55,6 +55,6 @@ export function RetryPlugin(retryConfig: RetryConfig = {}) {
           });
         },
       };
-    } as LifecycleFn,
+    } as HookFn,
   };
 }

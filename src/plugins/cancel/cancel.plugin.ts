@@ -1,4 +1,4 @@
-import { LifecycleFn } from '../../types';
+import { HookFn } from '../../types';
 import axios, { Canceler } from 'axios';
 
 export function CancelPlugin() {
@@ -14,10 +14,10 @@ export function CancelPlugin() {
         cancelers = [];
       },
     },
-    lifecycle: function () {
+    hooks: function () {
       let clear: Canceler;
       return {
-        beforeRequest(config) {
+        config(config) {
           const { cancel, token } = axios.CancelToken.source();
           config.cancelToken = token;
           cancelers.push(cancel);
@@ -34,6 +34,6 @@ export function CancelPlugin() {
           clear();
         },
       };
-    } as LifecycleFn,
+    } as HookFn,
   };
 }
