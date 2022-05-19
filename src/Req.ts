@@ -18,26 +18,34 @@ export class Req {
     },
   >(plugin: T): R & this;
   use(plugin) {
+    plugin.hooks && this.hooks.push(plugin.hooks);
     const _this = Object.create(this);
     Object.assign(_this, plugin.extends);
-    plugin.hook && _this.hooks.push(plugin.hook);
     return _this;
   }
   async request<T>(config: AxiosRequestConfig = {}): Promise<T> {
     config = { ...config };
     const hooks = this.hooks.map((lc) => (typeof lc === 'function' ? lc.call(this, config) : lc));
     try {
+      // hook: config
       for (const hook of hooks) {
         hook.config?.call(this, config);
       }
 
+      // hook: beforeRequest
+      for (const hook of hooks) {
+        hook.beforeRequest?.call(this, config);
+      }
+
       // 流
       let fetchFn = () => this.fetch(config);
+      // hook: onRequest
       for (const { onRequest } of hooks) {
         fetchFn = onRequest?.call(this, config, fetchFn) || fetchFn;
       }
 
       let res = await fetchFn();
+      // hook: afterRequest
       hooks.forEach(({ afterRequest }) => {
         res = afterRequest?.(res) ?? res;
       });
@@ -45,9 +53,11 @@ export class Req {
     } catch (e: any) {
       try {
         let res = e;
+        // hook: onRequestError
         for (const { onRequestError } of hooks) {
           res = (await onRequestError?.call(this, res)) ?? res;
         }
+        // hook: afterRequest
         hooks.forEach(({ afterRequest }) => {
           res = afterRequest?.(res) || res;
         });

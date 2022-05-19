@@ -2,6 +2,7 @@ import { AxiosError, AxiosPromise, AxiosRequestConfig, AxiosResponse } from 'axi
 
 export interface Hooks {
   config?: (config: AxiosRequestConfig) => void;
+  beforeRequest?: (config: AxiosRequestConfig) => void;
   onRequest?: (
     config: AxiosRequestConfig,
     fetch: () => AxiosPromise<any>,
