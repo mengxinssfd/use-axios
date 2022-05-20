@@ -10,7 +10,22 @@ export interface CacheConfig {
   failedReq?: boolean;
 }
 
-export const CachePlugin = (config: CacheConfig = {}) => {
+function mergeCacheConfig(cache: CacheConfig | boolean, base: CacheConfig = {}) {
+  switch (typeof cache) {
+    case 'boolean':
+      base.enable = cache;
+      break;
+    case 'object':
+      base = { ...base, ...cache };
+      if (cache.enable === undefined) {
+        base.enable = true;
+      }
+      break;
+  }
+  return base;
+}
+
+export const CachePlugin = (config: CacheConfig | boolean = false) => {
   const cache = new Cache<AxiosPromise>();
 
   const generateCacheKey = (config: AxiosRequestConfig): string => {
@@ -19,12 +34,12 @@ export const CachePlugin = (config: CacheConfig = {}) => {
   };
 
   return {
-    cacheConfig: config,
     extends: {
       cache,
-      useCache(this: Req, config: CacheConfig): Req {
+      cacheConfig: mergeCacheConfig(config),
+      useCache: function (this: Req, config: CacheConfig | boolean = true) {
         const _this = Object.create(this);
-        _this.cacheConfig = { ..._this.cacheConfig, ...config };
+        _this.cacheConfig = mergeCacheConfig(config, _this.cacheConfig);
         return _this;
       },
       noCache(this: Req): Req {
