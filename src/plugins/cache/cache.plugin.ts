@@ -25,6 +25,10 @@ function mergeCacheConfig(cache: CacheConfig | boolean, base: CacheConfig = {}) 
   return base;
 }
 
+export const PrivateKeys = {
+  cache: Symbol('cache'),
+  cacheConfig: Symbol('config'),
+};
 export const CachePlugin = (config: CacheConfig | boolean = false) => {
   const cache = new Cache<AxiosPromise>();
 
@@ -35,22 +39,26 @@ export const CachePlugin = (config: CacheConfig | boolean = false) => {
 
   return {
     extends: {
-      cache,
-      cacheConfig: mergeCacheConfig(config),
-      useCache: function (this: Req, config: CacheConfig | boolean = true) {
+      [PrivateKeys.cache]: cache,
+      [PrivateKeys.cacheConfig]: mergeCacheConfig(config),
+      useCache: function (this: Req, config: CacheConfig | boolean = true): Req {
         const _this = Object.create(this);
-        _this.cacheConfig = mergeCacheConfig(config, _this.cacheConfig);
+        _this[PrivateKeys.cacheConfig] = mergeCacheConfig(config, {
+          ..._this[PrivateKeys.cacheConfig],
+        });
         return _this;
       },
       noCache(this: Req): Req {
         const _this = Object.create(this);
-        _this.cacheConfig.enable = false;
+        const c = { ..._this[PrivateKeys.cacheConfig] };
+        c.enable = false;
+        _this[PrivateKeys.cacheConfig] = c;
         return _this;
       },
     },
     hooks: {
       onRequest(config, fetch) {
-        const cacheConfig = (this.cacheConfig || {}) as CacheConfig;
+        const cacheConfig = (this[PrivateKeys.cacheConfig] || {}) as CacheConfig;
         if (!cacheConfig.enable) return;
         const key = generateCacheKey(config);
         const cc = cache.get(key);
