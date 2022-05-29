@@ -7,16 +7,25 @@ export interface RetryConfig {
   interval?: number;
   immediate?: boolean;
 }
+function getUseRetry(retryConfig: RetryConfig) {
+  function useRetry(this: Req, retryTimes: number): Req;
+  function useRetry(this: Req, cfg: RetryConfig): Req;
+  function useRetry(cfg: number | RetryConfig = {}) {
+    if (typeof cfg === 'number') {
+      cfg = { times: cfg };
+    }
+    const _this = Object.create(this);
+    _this.retryConfig = { ...retryConfig, ...cfg };
+    return _this;
+  }
+  return useRetry;
+}
 
 export function RetryPlugin(retryConfig: RetryConfig = {}) {
   return {
     retryConfig: retryConfig,
     extends: {
-      useRetry(this: Req, cfg: RetryConfig = {}): Req {
-        const _this = Object.create(this);
-        _this.retryConfig = { ...retryConfig, ...cfg };
-        return _this;
-      },
+      useRetry: getUseRetry(retryConfig),
     },
     hooks: function (config) {
       return {
