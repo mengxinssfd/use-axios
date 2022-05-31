@@ -7,31 +7,23 @@ export interface RetryConfig {
   interval?: number;
   immediate?: boolean;
 }
-function getUseRetry(retryConfig: RetryConfig) {
-  function useRetry(this: Req, retryTimes: number): Req;
-  function useRetry(this: Req, cfg: RetryConfig): Req;
-  function useRetry(cfg: number | RetryConfig = {}) {
-    if (typeof cfg === 'number') {
-      cfg = { times: cfg };
-    }
-    const _this = Object.create(this);
-    _this.retryConfig = { ...retryConfig, ...cfg };
-    return _this;
-  }
-  return useRetry;
-}
 
 export function RetryPlugin(retryConfig: RetryConfig = {}) {
   return {
-    retryConfig: retryConfig,
     extends: {
-      useRetry: getUseRetry(retryConfig),
+      retryConfig: retryConfig,
+      useRetry(cfg: RetryConfig = {}): Req {
+        const _this = Object.create(this);
+        _this.retryConfig = { ...retryConfig, ...cfg };
+        return _this;
+      },
     },
     hooks: function (config) {
       return {
         async onRequestError(this: Req, e) {
           if (axios.isCancel(e)) return;
-          const maxTimex = retryConfig.times as number;
+          const retryConfig = (this as any).retryConfig as RetryConfig;
+          const maxTimex = retryConfig.times || 0;
           let times = 0;
           let timer: NodeJS.Timer;
           let reject = (): any => undefined;
