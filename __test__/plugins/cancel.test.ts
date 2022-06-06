@@ -14,12 +14,7 @@ describe('Req', () => {
       req.request({ url: '/user' }),
       req.request({ url: '/user' }),
     ];
-    // const q = req.request({ url: '/user' });
     req.cancelAll('test');
-
-    // const res = await q;
-
-    // console.log(res);
 
     const res = await Promise.allSettled(reqList);
 
@@ -28,16 +23,15 @@ describe('Req', () => {
       { status: 'rejected', reason: 'test' },
       { status: 'rejected', reason: 'test' },
     ]);
-  }); /*
+  });
   test('cancel current', async () => {
-    const req = new AxiosRequestTemplate();
-    const get = req.methodFactory('get');
-    const res1 = get({ url: '/user' });
-    req.cancelCurrentRequest?.('cancel1');
-    const res2 = get({ url: '/user' });
-    req.cancelCurrentRequest?.('cancel2');
-    const res3 = get({ url: '/user' });
-    req.cancelCurrentRequest?.('cancel3');
+    const req = r.use(CancelPlugin());
+    const res1 = req.request({ url: '/user' });
+    req.cancelCurrent?.('cancel1');
+    const res2 = req.request({ url: '/user' });
+    req.cancelCurrent?.('cancel2');
+    const res3 = req.request({ url: '/user' });
+    req.cancelCurrent?.('cancel3');
 
     const res = await Promise.allSettled([res1, res2, res3]);
 
@@ -46,5 +40,5 @@ describe('Req', () => {
       { status: 'rejected', reason: 'cancel2' },
       { status: 'rejected', reason: 'cancel3' },
     ]);
-  });*/
+  });
 });

@@ -8,7 +8,7 @@ export interface Hooks {
     fetch: () => AxiosPromise<any>,
   ) => void | (() => AxiosPromise<any>);
   afterRequest?: (res: AxiosResponse) => void;
-  onRequestError?: (e: AxiosError) => Promise<any> | void;
+  onRequestError?: (e: Promise<AxiosError>) => Promise<any> | void;
 }
 
 export type HookFn = (config: AxiosRequestConfig) => Hooks;
