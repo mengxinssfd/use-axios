@@ -44,12 +44,17 @@ export function useMockAxios(routers: any) {
       request: [] as InterceptorCB[],
     };
     function AxiosIns(config) {
-      const { url, data, params } = config;
+      const { url, data, params, cancelToken } = config;
       const cfg = interceptors.request.reduce((prev, cur) => {
         return cur(config) || config;
       }, config);
       if (cfg) Object.assign(config, cfg);
-      return (routers[url] || routers['404'])(data || params, config);
+      return new Promise((res, rej) => {
+        map.set(cancelToken, rej);
+        setTimeout(() => {
+          (routers[url] || routers['404'])(data || params, config).then(res, rej);
+        }, 20);
+      });
     }
     AxiosIns.interceptors = {
       request: {
@@ -61,6 +66,15 @@ export function useMockAxios(routers: any) {
     return AxiosIns;
   };
 
+  const map = new Map<string, Function>();
   (axios as any).create.mockImplementation(mockCreate);
-  (axios.CancelToken.source as any).mockReturnValue({});
+  (axios.CancelToken.source as any).mockImplementation(() => {
+    const token = Math.floor(Math.random() * 0xffffffffff).toString(16);
+    return {
+      token,
+      cancel(msg?: string) {
+        map.get(token)?.(msg);
+      },
+    };
+  });
 }
