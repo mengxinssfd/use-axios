@@ -51,9 +51,7 @@ export function useMockAxios(routers: any) {
       if (cfg) Object.assign(config, cfg);
       return new Promise((res, rej) => {
         map.set(cancelToken, rej);
-        setTimeout(() => {
-          (routers[url] || routers['404'])(data || params, config).then(res, rej);
-        }, 20);
+        (routers[url] || routers['404'])(data || params, config).then(res, rej);
       });
     }
     AxiosIns.interceptors = {

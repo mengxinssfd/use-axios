@@ -21,6 +21,7 @@ export function RetryPlugin(retryConfig: RetryConfig = {}) {
     hooks: function (config) {
       return {
         async onRequestError(this: Req, e) {
+          e = await e.catch((reason) => reason);
           if (axios.isCancel(e)) return;
           const retryConfig = (this as any).retryConfig as RetryConfig;
           const maxTimex = retryConfig.times || 0;

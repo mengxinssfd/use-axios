@@ -45,7 +45,7 @@ describe('Req', () => {
     expect(Object.keys(r)).toEqual(['test2']);
   });
   test('hooks calls', async () => {
-    expect.assertions(5);
+    expect.assertions(6);
     const hooks: Hooks = {
       config: jest.fn(),
       beforeRequest: jest.fn(),
@@ -55,8 +55,11 @@ describe('Req', () => {
     };
     const r = req.use({ hooks });
 
-    await r.request();
-
+    try {
+      await r.request();
+    } catch (e) {
+      expect(e).toBe('404');
+    }
     for (const [, v] of Object.entries(hooks)) {
       expect(v.mock.calls.length).toBe(1);
     }
