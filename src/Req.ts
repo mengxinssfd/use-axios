@@ -51,20 +51,16 @@ export class Req {
       });
       return res as any;
     } catch (e: any) {
-      try {
-        let res = Promise.reject(e);
-        // hook: onRequestError
-        for (const { onRequestError } of hooks) {
-          res = (await onRequestError?.call(this, res)) ?? res;
-        }
-        // hook: afterRequest
-        hooks.forEach(({ afterRequest }) => {
-          res = afterRequest?.(res as any) || res;
-        });
-        return res;
-      } catch (e) {
-        return Promise.reject(e);
+      let res = Promise.reject(e);
+      // hook: onRequestError
+      for (const { onRequestError } of hooks) {
+        res = (await onRequestError?.call(this, res)) ?? res;
       }
+      // hook: afterRequest
+      hooks.forEach(({ afterRequest }) => {
+        res = afterRequest?.(res as any) || res;
+      });
+      return res;
     }
   }
 }

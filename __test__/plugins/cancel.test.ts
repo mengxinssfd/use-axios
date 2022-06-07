@@ -5,7 +5,7 @@ useMockAxios(routers);
 import { Req } from '../../src/Req';
 import { CancelPlugin } from '../../src/plugins/cancel/cancel.plugin';
 
-describe('Req', () => {
+describe('cancel', () => {
   const r = new Req();
   test('cancel all', async () => {
     const req = r.use(CancelPlugin());

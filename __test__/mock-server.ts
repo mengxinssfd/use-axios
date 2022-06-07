@@ -8,6 +8,12 @@ export const routers = {
   '/config'(data, config) {
     return buildRes({ code: 1000, data: config, msg: 'success' });
   },
+  '/config/test'(data, config) {
+    return buildRes({ code: 1000, data: config, msg: 'success' });
+  },
+  '/config/test2'(data, config) {
+    return buildRes({ code: 1000, data: config, msg: 'success' });
+  },
   '/user'(data: any, { method }) {
     if (method === 'post') {
       return buildRes({ code: 200, data: { username: 'post', id: 2 }, msg: 'success' });

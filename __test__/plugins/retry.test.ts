@@ -53,7 +53,7 @@ const mockCreate = () => {
 (axios as any).create.mockImplementation(mockCreate);
 (axios as any).isCancel = (value: any) => typeof value === 'object' && 'message' in value;
 
-describe('AxiosRequestTemplate retry', () => {
+describe('retry', () => {
   const req = new Req().use(RetryPlugin());
   test('base', async () => {
     expect.assertions(4);
