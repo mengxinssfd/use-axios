@@ -1,4 +1,4 @@
-import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { Hooks, HookFn } from './types';
 
 export class Req {
@@ -23,7 +23,7 @@ export class Req {
     Object.assign(_this, plugin.extends);
     return _this;
   }
-  async request<T>(config: AxiosRequestConfig = {}): Promise<T> {
+  async request<T>(config: AxiosRequestConfig = {}): Promise<AxiosResponse<T>> {
     config = { ...config };
     const hooks = this.hooks.map((lc) => (typeof lc === 'function' ? lc.call(this, config) : lc));
     try {

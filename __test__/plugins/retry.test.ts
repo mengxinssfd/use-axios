@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { mockAxiosResponse, sleep } from '../utils';
-import { Req } from '../../src/Req';
-import { RetryPlugin } from '../../src/plugins/retry/retry.plugin';
+import { RetryPlugin, Req } from '../../src';
 
 jest.mock('axios');
 const map = new Map<string, Function>();

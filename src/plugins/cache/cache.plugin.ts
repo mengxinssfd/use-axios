@@ -67,7 +67,7 @@ export const CachePlugin = (config: CacheConfig | boolean = false) => {
         }
         const promise = fetch();
         // 存储缓存
-        cache.set(key, promise, cacheConfig);
+        cache.set(key, promise, { timeout: 5000, ...cacheConfig });
         // 如果该请求是被取消的话，就清理掉该缓存
         promise.catch((reason) => {
           if (!cacheConfig.failedReq || axios.isCancel(reason)) {

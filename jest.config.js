@@ -1,6 +1,7 @@
 module.exports = {
-  // 默认为node
-  // testEnvironment: 'jsdom',
+  preset: 'ts-jest',
+  testEnvironment: 'node',
+  collectCoverageFrom: ['src/**', '!src/index.ts', '!__test/mock-server.ts'],
   coverageThreshold: {
     global: {
       branches: 50,

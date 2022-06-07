@@ -2,8 +2,7 @@ import { routers, useMockAxios } from '../mock-server';
 
 useMockAxios(routers);
 
-import { Req } from '../../src/Req';
-import { CancelPlugin } from '../../src/plugins/cancel/cancel.plugin';
+import { Req, CancelPlugin } from '../../src';
 
 describe('cancel', () => {
   const r = new Req();

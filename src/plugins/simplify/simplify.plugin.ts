@@ -25,7 +25,7 @@ export function mergeObj<A extends object, B extends Object>(a: A, b: B): A & B 
 export function SimplifyPlugin() {
   return {
     extends: {
-      methodFactory(this: Req, method: Method) {
+      useMethod(this: Req, method: Method) {
         return <T>(config: Omit<AxiosRequestConfig, 'method'>) =>
           this.request<T>({ ...config, method });
       },
@@ -37,7 +37,7 @@ export function SimplifyPlugin() {
           return this.request<T>(cfg);
         };
       },
-      simplifyMethodFactory(this: Req, method: Method, urlPrefix = '') {
+      simplifyUseMethod(this: Req, method: Method, urlPrefix = '') {
         return <T>(url: string, data: {} = {}) => {
           const requestConfig: AxiosRequestConfig = { method };
           if (method === 'get') {

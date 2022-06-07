@@ -2,15 +2,14 @@ import { routers, useMockAxios } from '../mock-server';
 
 useMockAxios(routers);
 
-import { Req } from '../../src/Req';
-import { SimplifyPlugin } from '../../src/plugins/simplify/simplify.plugin';
+import { Req, SimplifyPlugin } from '../../src';
 
 describe('simplify', () => {
   const r = new Req();
   test('methodFactory', async () => {
     const req = r.use(SimplifyPlugin());
-    const get = req.methodFactory('get');
-    const post = req.methodFactory('post');
+    const get = req.useMethod('get');
+    const post = req.useMethod('post');
     expect.assertions(5);
     // console.log((axios.create({ url: 'test' }) as any)(1, 2, 3), Req);
     const res = await get<{ username: string; id: number }>({ url: '/user' });
@@ -43,8 +42,8 @@ describe('simplify', () => {
   });
   test('simplifyMethodFactory', async () => {
     const req = r.use(SimplifyPlugin());
-    const get = req.simplifyMethodFactory('get');
-    const post = req.simplifyMethodFactory('post');
+    const get = req.simplifyUseMethod('get');
+    const post = req.simplifyUseMethod('post');
     expect.assertions(5);
     // console.log((axios.create({ url: 'test' }) as any)(1, 2, 3), Req);
     const res = await get<{ username: string; id: number }>('/user');
