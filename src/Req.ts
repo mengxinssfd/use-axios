@@ -44,10 +44,11 @@ export class Req {
         fetchFn = onRequest?.call(this, config, fetchFn) || fetchFn;
       }
 
-      let res = await fetchFn();
+      const response = await fetchFn();
+      let res = response;
       // hook: afterRequest
       hooks.forEach(({ afterRequest }) => {
-        res = afterRequest?.(res) ?? res;
+        res = afterRequest?.call(this, response, res) ?? res;
       });
       return res as any;
     } catch (e: any) {
@@ -58,7 +59,7 @@ export class Req {
       }
       // hook: afterRequest
       hooks.forEach(({ afterRequest }) => {
-        res = afterRequest?.(res as any) || res;
+        res = afterRequest?.call(this, e, res as any) || res;
       });
       return res;
     }
