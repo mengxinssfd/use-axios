@@ -28,8 +28,8 @@ describe('CodeHandler', () => {
   });
   test('use CodeHandlerPlugin false setReturnRes', async () => {
     const req = r.use(CodeHandlerPlugin(false));
-    // const res = await req.request<{ username: string; id: number }>({ url: '/user' });
-    // expect(res).toEqual({ code: 200, data: { id: 1, username: 'get' }, msg: 'success' });
+    const res = await req.request<{ username: string; id: number }>({ url: '/user' });
+    expect(res).toEqual({ code: 200, data: { id: 1, username: 'get' }, msg: 'success' });
 
     const res2 = await req
       .setReturnRes(true)

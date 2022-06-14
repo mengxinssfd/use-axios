@@ -2,23 +2,22 @@ import { Hooks } from '../../types';
 import { Req } from '../../Req';
 import { AxiosRequestConfig } from 'axios';
 
-export function CodeHandlerPlugin(returnRes = true) {
+export function CodeHandlerPlugin(returnRes = true, codeHandlers = {}) {
   return {
     extends: {
       returnRes,
+      codeHandlers,
       setReturnRes(value): Req {
-        // 锁住this
-        // this.request = this.request.bind(this);
         const _this = Object.create(this);
         _this.returnRes = value;
         return _this;
       },
       request<T>(this: Req, config: AxiosRequestConfig): Promise<T> {
-        let root = this as any;
+        let _super = this as any;
 
-        while (!Object.prototype.hasOwnProperty.call(root, 'use')) root = root.__proto__;
+        while (_super.setReturnRes) _super = _super.__proto__;
 
-        return root.request.call(this, config);
+        return _super.request.call(this, config);
       },
     },
     hooks: {
