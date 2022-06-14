@@ -4,6 +4,7 @@ export * from './plugins/cache/Cache';
 export * from './plugins/cancel/cancel.plugin';
 export * from './plugins/retry/retry.plugin';
 export * from './plugins/simplify/simplify.plugin';
+export * from './plugins/codeHandler/codeHandler.plugin';
 
 // const req = new Req({ baseURL: '' })
 //   .use(SimplifyPlugin())
