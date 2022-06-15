@@ -33,7 +33,7 @@ describe('CodeHandler', () => {
 
     const res2 = await req
       .setReturnRes(true)
-      .request<{ username: string; id: number }>({ url: '/user' });
+      .request<{ username: string; id: number }, false>({ url: '/user' });
     expect(res2).toEqual({
       data: { code: 200, data: { id: 1, username: 'get' }, msg: 'success' },
       status: 200,

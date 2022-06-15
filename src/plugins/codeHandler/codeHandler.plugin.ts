@@ -1,18 +1,23 @@
 import { Hooks } from '../../types';
 import { Req } from '../../Req';
-import { AxiosRequestConfig } from 'axios';
+import { AxiosRequestConfig, AxiosResponse } from 'axios';
 
 export function CodeHandlerPlugin(returnRes = true, codeHandlers = {}) {
   return {
     extends: {
       returnRes,
       codeHandlers,
-      setReturnRes(value): Req {
+      // fixme extends的函数如果有泛型会丢失泛型，返回值的泛型不会丢失
+      setReturnRes(value): {
+        request<T = never, R extends boolean = true>(
+          config: AxiosRequestConfig,
+        ): Promise<R extends true ? AxiosResponse<T> : T>;
+      } {
         const _this = Object.create(this);
         _this.returnRes = value;
         return _this;
       },
-      request<T>(this: Req, config: AxiosRequestConfig): Promise<T> {
+      request(this: Req, config: AxiosRequestConfig) {
         let _super = this as any;
 
         while (_super.setReturnRes) _super = _super.__proto__;
